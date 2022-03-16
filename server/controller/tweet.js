@@ -3,14 +3,18 @@ import * as tweetRepository from '../data/tweet.js';
 export async function getTweets(req, res) {
   const username = req.query.username;
   const data = await (username
-    ? tweetRepository.getAllByUsername
-    : tweetRepository.getAll);
+    ? tweetRepository.getAllByUsername(username)
+    : tweetRepository.getAll());
+
+  console.log('로그');
+  console.log(data);
   res.status(200).json(data);
 }
 
 export async function getTweet(req, res) {
   const id = req.params.id;
-  const tweet = await tweetRepository.getAllById;
+  const tweet = await tweetRepository.getAllById(id);
+  console.log(tweet);
   if (tweet) {
     res.status(200).json(tweet);
   } else {
@@ -20,6 +24,7 @@ export async function getTweet(req, res) {
 
 export async function createTweet(req, res) {
   const { text, name, username } = req.body;
+  console.log(username);
   const tweet = await tweetRepository.create(text, name, username);
   res.status(201).json(tweet);
 }

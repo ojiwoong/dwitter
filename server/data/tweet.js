@@ -3,7 +3,7 @@ let tweets = [
     id: '1',
     text: 'dwitter project',
     name: 'Jiwoong',
-    username: 'wldnd334',
+    username: 'jiwoong',
     createdAt: new Date(),
     url: 'https://media.vlpt.us/images/potter/post/76303932-4916-4c24-9252-7e530a57bf0c/1_XP-mZOrIqX7OsFInN2ngRQ.png',
   },
@@ -39,6 +39,8 @@ export async function create(text, name, username) {
   };
 
   tweets = [tweet, ...tweets];
+
+  return tweet;
 }
 
 export async function update(id, text) {
