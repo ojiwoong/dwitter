@@ -1,46 +1,58 @@
+import * as userRepository from './auth.js';
+
 let tweets = [
   {
     id: '1',
     text: 'dwitter project',
-    name: 'Jiwoong',
-    username: 'jiwoong',
-    createdAt: new Date(),
-    url: 'https://media.vlpt.us/images/potter/post/76303932-4916-4c24-9252-7e530a57bf0c/1_XP-mZOrIqX7OsFInN2ngRQ.png',
+    createdAt: new Date().toString(),
+    userId: '1',
   },
   {
     id: '2',
     text: 'Hi, my name is Bob',
-    name: 'Bob',
-    username: 'bob',
-    createdAt: new Date(),
-    url: 'https://media.vlpt.us/images/potter/post/76303932-4916-4c24-9252-7e530a57bf0c/1_XP-mZOrIqX7OsFInN2ngRQ.png',
+    createdAt: new Date().toString(),
+    userId: '1',
   },
 ];
 
 export async function getAll() {
-  return tweets;
+  return Promise.all(
+    tweets.map(async tweet => {
+      const { username, name, url } = await userRepository.findById(
+        tweet.userId
+      );
+      return { ...tweet, username, name, url };
+    })
+  );
 }
 
 export async function getAllByUsername(username) {
-  return tweets.filter(tweet => tweet.username === username);
+  return getAll().then(tweets =>
+    tweets.filter(tweet => tweet.username === username)
+  );
 }
 
 export async function getAllById(id) {
-  return tweets.find(tweet => tweet.id === id);
+  const found = tweets.find(tweet => tweet.id === id);
+  if (!found) {
+    return null;
+  }
+
+  const { username, name, url } = await userRepository.findById(found.userId);
+  return { ...found, username, name, url };
 }
 
-export async function create(text, name, username) {
+export async function create(text, userId) {
   const tweet = {
     id: Date.now().toString(),
     text,
     createdAt: new Date(),
-    name,
-    username,
+    userId,
   };
 
   tweets = [tweet, ...tweets];
 
-  return tweet;
+  return getAllById(tweet.id);
 }
 
 export async function update(id, text) {
@@ -49,7 +61,7 @@ export async function update(id, text) {
     tweet.text = text;
   }
 
-  return tweet;
+  return getAllById(tweet.id);
 }
 
 export async function remove(id) {
