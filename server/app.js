@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import 'express-async-errors';
 import tweetsRoute from './router/tweets.js';
+import authRoute from './router/auth.js';
 
 const app = express();
 const tweets = [];
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(morgan('tiny'));
 
 app.use('/tweets', tweetsRoute);
+app.use('/auth', authRoute);
 
 app.use((req, res, next) => {});
 
