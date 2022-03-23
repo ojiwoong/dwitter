@@ -24,12 +24,12 @@ export async function findById(id) {
 }
 
 export async function createUser(user) {
-  const create = {
+  const created = {
     ...user,
     id: Date.now().toString(),
   };
 
-  users.push(create);
+  users.push(created);
 
-  return user.id;
+  return created.id;
 }

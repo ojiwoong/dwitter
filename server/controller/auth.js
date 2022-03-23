@@ -26,8 +26,6 @@ export async function me(req, res) {
 export async function signup(req, res) {
   const { username, password, name, email, url } = req.body;
 
-  console.log(req.body);
-
   const user = await userRepository.findByUsername(username);
 
   if (user) {
