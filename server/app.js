@@ -7,7 +7,6 @@ import tweetsRoute from './router/tweets.js';
 import authRoute from './router/auth.js';
 
 const app = express();
-const tweets = [];
 
 app.use(express.json());
 
