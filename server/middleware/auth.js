@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
+import { config } from '../config.js';
 import * as userRepository from '../data/auth.js';
 
 const AUTH_ERROR = { message: '인증 에러' };
-const JWT_SECRETKEY = '3IXpaUOHC@7G73rCVdtIGEX0$SF2ra1t';
 
 export const isAuth = async (req, res, next) => {
   const authHeader = req.get('Authorization');
@@ -12,7 +12,7 @@ export const isAuth = async (req, res, next) => {
 
   const token = authHeader.split(' ')[1];
 
-  jwt.verify(token, JWT_SECRETKEY, async (error, decoded) => {
+  jwt.verify(token, config.jwt.secretKey, async (error, decoded) => {
     if (error) {
       return res.status(401).json(AUTH_ERROR);
     }
@@ -22,7 +22,6 @@ export const isAuth = async (req, res, next) => {
       return res.status(401).json(AUTH_ERROR);
     }
 
-    req.token = JWT_SECRETKEY;
     req.userId = user.id;
     next();
   });
