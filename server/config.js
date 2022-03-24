@@ -21,4 +21,11 @@ export const config = {
   host: {
     port: parseInt(required('HOST_PORT', 8080)),
   },
+  db: {
+    host: required('DB_HOST'),
+    port: parseInt(required('DB_PORT')),
+    user: required('DB_USER'),
+    database: required('DB_DATABASE'),
+    password: required('DB_PASSWORD'),
+  },
 };
