@@ -9,6 +9,15 @@ let users = [
     createdAt: new Date(),
     updatedAt: null,
   },
+  {
+    id: '2',
+    username: 'test334',
+    password: '$2b$12$/EDPw6WAPGWA.EWL5o4GG.Yo5VXL0b/4sAMWuOd3Y6TzaeW2F/1S6',
+    name: 'tester',
+    email: 'test@gmail.com',
+    createdAt: new Date(),
+    updatedAt: null,
+  },
 ];
 
 export async function findAll() {
