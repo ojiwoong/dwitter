@@ -1,69 +1,86 @@
+import { db } from '../db/database.js';
 import * as userRepository from './auth.js';
 
-let tweets = [
-  {
-    id: '1',
-    text: 'dwitter project',
-    createdAt: new Date().toString(),
-    userId: '1',
-  },
-  {
-    id: '2',
-    text: 'Hi, my name is Bob',
-    createdAt: new Date().toString(),
-    userId: '1',
-  },
-];
+// let tweets = [
+//   {
+//     id: '1',
+//     text: 'dwitter project',
+//     createdAt: new Date().toString(),
+//     userId: '1',
+//   },
+//   {
+//     id: '2',
+//     text: 'Hi, my name is Bob',
+//     createdAt: new Date().toString(),
+//     userId: '1',
+//   },
+// ];
+
+const SELECT_JOIN =
+  'SELECT tw.id, tw.text, tw.createdAt, tw.userId, us.username, us.name, us.url FROM tweets as tw JOIN users as us ON tw.userId=us.id';
+const ORDER_DESC = 'ORDER BY tw.createdAt DESC';
 
 export async function getAll() {
-  return Promise.all(
-    tweets.map(async tweet => {
-      const { username, name, url } = await userRepository.findById(
-        tweet.userId
-      );
-      return { ...tweet, username, name, url };
-    })
-  );
+  try {
+    const result = await db.execute(`${SELECT_JOIN} ${ORDER_DESC}`);
+
+    return result[0];
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export async function getAllByUsername(username) {
-  return getAll().then(tweets =>
-    tweets.filter(tweet => tweet.username === username)
-  );
+  try {
+    const result = await db.execute(
+      `${SELECT_JOIN} WHERE username=? ${ORDER_DESC}`,
+      [username]
+    );
+
+    return result[0];
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export async function getAllById(id) {
-  const found = tweets.find(tweet => tweet.id === id);
-  if (!found) {
-    return null;
-  }
+  try {
+    const result = await db.execute(`${SELECT_JOIN} WHERE tw.id=?`, [id]);
 
-  const { username, name, url } = await userRepository.findById(found.userId);
-  return { ...found, username, name, url };
+    return result[0][0];
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export async function create(text, userId) {
-  const tweet = {
-    id: Date.now().toString(),
-    text,
-    createdAt: new Date(),
-    userId,
-  };
+  try {
+    const result = await db.execute(
+      'INSERT INTO tweets (text, createdAt, userId) VALUES(?,?,?)',
+      [text, new Date(), userId]
+    );
 
-  tweets = [tweet, ...tweets];
-
-  return getAllById(tweet.id);
+    return getAllById(result[0].insertId);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export async function update(id, text) {
-  const tweet = tweets.find(tweet => tweet.id === id);
-  if (tweet) {
-    tweet.text = text;
-  }
+  try {
+    const result = await db.execute('UPDATE tweets SET text=? WHERE id=?', [
+      text,
+      id,
+    ]);
 
-  return getAllById(tweet.id);
+    return getAllById(id);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export async function remove(id) {
-  const tweet = tweets.filter(tweet => tweet.id !== id);
+  const result = await db.execute('DELETE FROM tweets WHERE id=?', [id]);
+
+  return result;
 }

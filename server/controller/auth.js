@@ -6,8 +6,19 @@ import * as userRepository from '../data/auth.js';
 import { config } from '../config.js';
 
 export async function getUsers(req, res) {
-  const data = await userRepository.findAll();
-  console.log(data);
+  const username = req.query.username;
+
+  let data;
+  if (username) {
+    data = await userRepository.findByUsername(username);
+  } else {
+    data = await userRepository.findAll();
+  }
+
+  if (!data) {
+    res.status(404).json({ message: '해당 회원은 존재하지 않습니다.' });
+  }
+
   res.status(200).json(data);
 }
 
